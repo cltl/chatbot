@@ -1,7 +1,6 @@
-import telegram
 import datetime
 import random
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, BaseFilter
+from telegram.ext import BaseFilter
 
 from src.utils import *
 
@@ -71,44 +70,3 @@ def respond_intent(update, context):
 
 def unknown(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that command.")
-
-
-def main():
-    # Who am I?
-    bot = telegram.Bot(token=CLTL_TOKEN)
-    print(bot.get_me())
-
-    # Instantiate filters
-    filter_greetings = FilterGreetings()
-    filter_toxic = FilterToxic()
-    filter_intent = FilterIntents()
-
-    # Basic telegram functionality for updates
-    updater = Updater(token=CLTL_TOKEN, use_context=True)
-    dispatcher = updater.dispatcher
-
-    # Define handlers (order is important)
-    start_handler = CommandHandler('start', start)
-    dispatcher.add_handler(start_handler)
-
-    greet_handler = MessageHandler(filter_greetings, greet)
-    dispatcher.add_handler(greet_handler)
-
-    echo_handler = MessageHandler(filter_toxic, echo)
-    dispatcher.add_handler(echo_handler)
-
-    intents_handler = MessageHandler(filter_intent, respond_intent)
-    dispatcher.add_handler(intents_handler)
-
-    unknown_handler = MessageHandler(Filters.command, unknown)
-    dispatcher.add_handler(unknown_handler)
-
-    # Run!
-    updater.start_polling()
-
-
-if __name__ == '__main__':
-    try:
-        main()
-    except KeyboardInterrupt:
-        exit()
