@@ -22,7 +22,7 @@ The CLTL token may be shared on demand, or you can create your own bot following
 
 
 ## Running
-To run the chatbot, you can run the ```main.py``` script. Then you will be able to chat with the [CLTL bot](t.me/cltl_bot.) on telegram (either mobile or the desktop app). 
+To run the chatbot, you can run the ```main.py``` script. Then you will be able to chat with the CLTL bot: t.me/cltl_bot on telegram (either mobile or the desktop app). 
 
 ## Testing and developing 
 

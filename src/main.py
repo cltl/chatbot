@@ -11,7 +11,6 @@ def main():
 
     # Instantiate filters
     filter_greetings = FilterGreetings()
-    filter_toxic = FilterToxic()
     filter_intent = FilterIntents()
 
     # Basic telegram functionality for updates
@@ -25,13 +24,10 @@ def main():
     greet_handler = MessageHandler(filter_greetings, greet)
     dispatcher.add_handler(greet_handler)
 
-    echo_handler = MessageHandler(filter_toxic, echo)
-    dispatcher.add_handler(echo_handler)
-
     intents_handler = MessageHandler(filter_intent, respond_intent)
     dispatcher.add_handler(intents_handler)
 
-    unknown_handler = MessageHandler(Filters.command, unknown)
+    unknown_handler = MessageHandler(Filters.all, unknown)
     dispatcher.add_handler(unknown_handler)
 
     # Run!

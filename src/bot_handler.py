@@ -7,7 +7,6 @@ from src.utils import *
 CLTL_TOKEN = read_token()
 intents = read_intents()
 greetings = ('hello', 'hi', 'greetings', 'sup')
-toxic = ('stupid', 'moron')
 
 
 # Tailor made filters
@@ -16,57 +15,53 @@ class FilterGreetings(BaseFilter):
         return message.text.lower() in greetings
 
 
-class FilterToxic(BaseFilter):
-    def filter(self, message):
-        return message.text.lower() in toxic
-
-
 class FilterIntents(BaseFilter):
     def filter(self, message):
-        for i in intents['intents']:
-            if message.text in i['patterns']:
-                print("Type of intent is: {}".format(i["tag"]))
-                return True
-
+        intent = match_to_category(message, intents)
+        if intent:
+            return True
         return False
 
 
 # Actual processes
 def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
+    response = "I'm a bot, please talk to me!"
+
+    log(update, response)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 
 def greet(update, context):
     now = datetime.datetime.now()
     hour = now.hour
-
-    last_chat_name = update.message.chat.first_name
-    greeting = ''
+    speaker = update.message.chat.first_name
 
     if 6 <= hour < 12:
-        greeting = 'Good Morning  {}'.format(last_chat_name)
+        response = 'Good Morning  {}'.format(speaker)
     elif 12 <= hour < 17:
-        greeting = 'Good Afternoon {}'.format(last_chat_name)
+        response = 'Good Afternoon {}'.format(speaker)
     elif 17 <= hour < 23:
-        greeting = 'Good Evening  {}'.format(last_chat_name)
+        response = 'Good Evening  {}'.format(speaker)
+    else:
+        response = 'Good Night  {}'.format(speaker)
 
-    context.bot.send_message(chat_id=update.effective_chat.id, text=greeting)
-
-
-def echo(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
+    log(update, response)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 
 def respond_intent(update, context):
     response = "I am in an intent"
 
-    for i in intents['intents']:
-        if update.message.text in i['patterns']:
-            response = random.choice(i['responses'])
-            break
+    intent = match_to_category(update.message, intents)
+    if intent:
+        response = random.choice(intent['responses'])
 
+    log(update, response)
     context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 
 def unknown(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that command.")
+    response = "Sorry I did not understand that!"
+
+    log(update, response)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=response)
